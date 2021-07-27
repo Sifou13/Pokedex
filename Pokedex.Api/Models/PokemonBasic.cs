@@ -1,11 +1,11 @@
-﻿namespace Pokedex.Services.Resources.DataAccess
+﻿namespace Pokedex.Api.Models
 {
     public class PokemonBasic
     {
         public string Name { get; set; }
 
         public string Description { get; set; }
-        
+
         public PokemonHabitat PokemonHabitat { get; set; }
 
         public bool IsLegendary { get; set; }

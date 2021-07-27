@@ -1,12 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Pokedex.Api.Framework;
 
 namespace Pokedex.Api
 {
@@ -14,6 +10,12 @@ namespace Pokedex.Api
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(Pokedex.Services.DataContractMappingProfile), typeof(Framework.ServicesMappingProfile));
+
+            //We've extracted this to an extension method on the Framework namespace to keep the plumbing out of Startup
+            // and keep this class readable
+            services.RegisterPokedexServices();
+
             services.AddControllers();            
         }
 

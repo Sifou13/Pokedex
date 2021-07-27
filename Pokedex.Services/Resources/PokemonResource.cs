@@ -1,15 +1,23 @@
-﻿using Pokedex.Services.Resources.Contract;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using AutoMapper;
 
 namespace Pokedex.Services.Resources
 {
-    public class PokemonResource : IPokemonResource
+    public class PokemonResource : Contract.IPokemonResource
     {
-        public PokemonBasic Select(string name)
+        private readonly DataAccess.IPokemonDA pokemonDA;
+        private readonly IMapper mapper;
+
+        public PokemonResource(DataAccess.IPokemonDA pokemonDA, IMapper mapper)
         {
-            throw new NotImplementedException();
+            this.pokemonDA = pokemonDA;
+            this.mapper = mapper;
+        }
+
+        public Contract.PokemonBasic SelectByName(string name)
+        {
+            DataAccess.PokemonBasic retrievedPokemon = pokemonDA.SelectByName(name);
+
+           return mapper.Map<Resources.Contract.PokemonBasic>(retrievedPokemon);
         }
     }
 }

@@ -1,19 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Pokedex.Services.Resources.DataAccess
+﻿namespace Pokedex.Services.Resources.DataAccess
 {
     public interface IPokemonDA
     {
-        PokemonBasic DetailByName(string name);
+        PokemonBasic SelectByName(string name);
     }
 
     public class PokemonDA : IPokemonDA
     {
-        public PokemonBasic DetailByName(string name)
+        public PokemonBasic SelectByName(string name)
         {
-            throw new NotImplementedException();
+            return new PokemonBasic
+            {
+                Name = name,
+                Description = $"We don't yet have a description for {name}, but we promise, it's coming soon",
+                PokemonHabitat = PokemonHabitat.Cave,
+                IsLegendary = true
+            };
         }
     }
 }

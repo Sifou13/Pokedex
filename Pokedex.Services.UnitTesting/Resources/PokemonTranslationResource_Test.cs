@@ -1,15 +1,14 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Pokedex.Services.Resources;
 using Pokedex.Services.Resources.Contract;
-using Pokedex.Services.Resources.DataAccess;
-using System;
+using Pokedex.Services.Resources.DataAccess.Translators;
 
 namespace Pokedex.Services.UnitTesting.Resources
 {
     [TestClass]
     public class PokemonTranslationResource_Test
     {
-        private IPokemonTranslationResource pokemonTranslationResource;
+        private ITranslationResource pokemonTranslationResource;
         private IShakespeareTranslator shakespeareTranslator;
         private IYodaTranslator yodaTranslator;
 
@@ -19,7 +18,7 @@ namespace Pokedex.Services.UnitTesting.Resources
             shakespeareTranslator = new ShakespeareTranslator();
             yodaTranslator = new YodaTranslator();
 
-            pokemonTranslationResource = new PokemonTranslationResource(shakespeareTranslator, yodaTranslator);
+            pokemonTranslationResource = new TranslationResource(shakespeareTranslator, yodaTranslator);
         }
 
         [TestCleanup]

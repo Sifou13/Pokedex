@@ -2,19 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Pokedex.Services.Contract
+namespace Pokedex.Services.Resources.DataAccess.Pokemon
 {
-    public class PokemonBasic
-    {
-        public string Name { get; set; }
-        
-        public string Description { get; set; }
-
-        public PokemonHabitat Habitat { get; set; }
-
-        public bool IsLegendary { get; set; }
-    }
-
     public enum PokemonHabitat
     {
         None = 0,

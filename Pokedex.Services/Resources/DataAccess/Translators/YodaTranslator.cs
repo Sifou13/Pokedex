@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace Pokedex.Services.Resources.DataAccess
+namespace Pokedex.Services.Resources.DataAccess.Translators
 {
-    public interface IShakespeareTranslator
+    public interface IYodaTranslator
     {
         string Translate(string textToTranslate);
     }
 
-    public class ShakespeareTranslator : IShakespeareTranslator
+    public class YodaTranslator : IYodaTranslator
     {
         public string Translate(string textToTranslate)
         {

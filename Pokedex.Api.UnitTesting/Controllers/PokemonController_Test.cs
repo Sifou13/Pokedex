@@ -1,28 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Pokedex.Api.Controllers;
-using System.Collections.Generic;
+using Pokedex.Services.Contract;
 using System.Threading.Tasks;
 
 namespace Pokedex.Api.UnitTesting.Controllers
 {
+    //This was created as a standalone test class since this controller seem like it  be used as the CRUD for Pokemons as we should keep
+    // those tests in isolation from other that relate to manipulation of the Pokemon
+
     [TestClass]
     public class PokemonController_Test
     {
         private PokemonController pokemonController;
-
+        private Mock<IPokemonInformationOrchestrator> pokemonInformationOrchestratorMock;
+        
         [TestInitialize]
         public void Initialize()
         {
-            pokemonController = new PokemonController();
+            pokemonInformationOrchestratorMock = new Mock<IPokemonInformationOrchestrator>(MockBehavior.Strict);
+
+            pokemonController = UnitTestSetupHelper.CreatePokemonController(pokemonInformationOrchestratorMock);
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            //Here Being Pragmatic again and going against YAGNI since not needed now
-            //However this is a base / initial framework that other engineers may start contributing to
-            //so it may be good as a reminder that any mock or other dependencie will have to be disposed of here
+            pokemonInformationOrchestratorMock.VerifyAll();
         }
 
         [TestMethod]
@@ -40,13 +45,32 @@ namespace Pokedex.Api.UnitTesting.Controllers
         [TestMethod]
         public async Task Get_Pikachu_ReturnsOkStatusWithStringStatingTheApiIsNotReadyYet()
         {
-            string expectedPokemonResponseTemporaryMessage = $"Sorry, Pikachu's information have not yet been made available.....";
+            string pokemonName = "Pikachu";
 
-            ActionResult<string> result = await pokemonController.Get("Pikachu");
+            Pokedex.Services.Contract.PokemonBasic fakeServiceReturnedPokemon = ScenarioHelper_PokedexServiceContract.CreatePokemonBasic(pokemonName, "We don't yet have a description for Pikachu, but we promise, it's coming soon");
 
-            Assert.AreEqual(typeof(OkObjectResult), result.Result.GetType());
+            pokemonInformationOrchestratorMock.ExpectGetPokemonDetailsAsync(pokemonName, fakeServiceReturnedPokemon);
             
-            Assert.AreEqual(expectedPokemonResponseTemporaryMessage, (result.Result as OkObjectResult).Value);
+            ActionResult<string> returnedPokemon = await pokemonController.Get(pokemonName);
+
+            Assert.AreEqual(typeof(OkObjectResult), returnedPokemon.Result.GetType());
+
+            Models.PokemonBasic expectedPokemon = ScenarioHelper_ApiModels.CreatePokemon(pokemonName, "We don't yet have a description for Pikachu, but we promise, it's coming soon");
+
+            AssertPokemonProperties(expectedPokemon, (Models.PokemonBasic)(returnedPokemon.Result as OkObjectResult).Value);
+
+            pokemonInformationOrchestratorMock.VerifyGetPokemonDetailsAsync(pokemonName);
+        }
+
+        private void AssertPokemonProperties(Models.PokemonBasic expectedPokemonBasic, Models.PokemonBasic actualPokemonBasic)
+        {
+            Assert.IsNotNull(expectedPokemonBasic);
+            Assert.IsNotNull(actualPokemonBasic);
+
+            Assert.AreEqual(expectedPokemonBasic.Name, actualPokemonBasic.Name);
+            Assert.AreEqual(expectedPokemonBasic.Description, actualPokemonBasic.Description);
+            Assert.AreEqual(expectedPokemonBasic.PokemonHabitat, actualPokemonBasic.PokemonHabitat);
+            Assert.AreEqual(expectedPokemonBasic.IsLegendary, actualPokemonBasic.IsLegendary);
         }
 
     }

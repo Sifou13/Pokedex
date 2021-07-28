@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Pokedex.Services.Resources.Contract
+﻿namespace Pokedex.Services.Resources.Contract
 {
     public class PokemonBasic
     {
         public string Name { get; set; }
 
         public string Description { get; set; }
-
+        
         public PokemonHabitat PokemonHabitat { get; set; }
 
         public bool IsLegendary { get; set; }

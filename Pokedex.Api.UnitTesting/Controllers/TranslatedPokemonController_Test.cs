@@ -25,7 +25,7 @@ namespace Pokedex.Api.UnitTesting.Controllers
         [TestMethod]
         public async Task Index_DefaultApiEndpoint_ShouldNotBeHit_ProvideRelevantDocumentationToUserForCorrectUseOfApi()
         {
-            string expectedTranslatedPokemonDefaultApiResponse = @"This API is designed around individual Pokemons./n/nChoose a pokemon name to see a fun translation of their description./rYou can do this by adding it to the URL: currentURL + ""/mewtwo";
+            string expectedTranslatedPokemonDefaultApiResponse = @"This API is designed around individual Pokemons. Choose a pokemon name to see a fun translation of their description. You can do this by adding it to the URL: currentURL + ""/mewtwo";
             
             ActionResult<string> result = await translatedPokemonController.Index();
 

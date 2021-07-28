@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Pokedex.Services.Contract;
 
-namespace Pokedex.Services.UnitTesting
+namespace Pokedex.Services.UnitTesting.UnitTestingHelpers
 {
     public static class ScenarioHelper_Contract
     {
@@ -11,7 +11,7 @@ namespace Pokedex.Services.UnitTesting
             {
                 Name = name,
                 Description = description,
-                PokemonHabitat = pokemonHabitat ?? PokemonHabitat.Cave,
+                Habitat = pokemonHabitat ?? PokemonHabitat.Cave,
                 IsLegendary = IsLegendary ?? true
             };
         }

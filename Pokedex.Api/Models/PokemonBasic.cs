@@ -6,14 +6,14 @@
 
         public string Description { get; set; }
 
-        public PokemonHabitat PokemonHabitat { get; set; }
+        public PokemonHabitat Habitat { get; set; }
 
         public bool IsLegendary { get; set; }
     }
 
     public enum PokemonHabitat
     {
-        none = 0,
+        None = 0,
         Cave = 1,
         Forest = 2,
         Grassland = 3,

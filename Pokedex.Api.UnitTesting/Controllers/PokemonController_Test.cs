@@ -69,7 +69,7 @@ namespace Pokedex.Api.UnitTesting.Controllers
 
             Assert.AreEqual(expectedPokemonBasic.Name, actualPokemonBasic.Name);
             Assert.AreEqual(expectedPokemonBasic.Description, actualPokemonBasic.Description);
-            Assert.AreEqual(expectedPokemonBasic.PokemonHabitat, actualPokemonBasic.PokemonHabitat);
+            Assert.AreEqual(expectedPokemonBasic.Habitat, actualPokemonBasic.Habitat);
             Assert.AreEqual(expectedPokemonBasic.IsLegendary, actualPokemonBasic.IsLegendary);
         }
 

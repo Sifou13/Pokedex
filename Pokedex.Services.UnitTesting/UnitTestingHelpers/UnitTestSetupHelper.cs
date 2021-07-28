@@ -4,7 +4,7 @@ using Pokedex.Services.Contract;
 using Pokedex.Services.Orchestrators;
 using Pokedex.Services.Resources.Contract;
 
-namespace Pokedex.Services.UnitTesting
+namespace Pokedex.Services.UnitTesting.UnitTestingHelpers
 {
     public static class UnitTestSetupHelper
     {

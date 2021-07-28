@@ -1,14 +1,14 @@
 ﻿using Pokedex.Services.Resources.Contract;
-using Pokedex.Services.Resources.DataAccess;
+using Pokedex.Services.Resources.DataAccess.Translators;
 using System;
 namespace Pokedex.Services.Resources
 {
-    public class PokemonTranslationResource : IPokemonTranslationResource
+    public class TranslationResource : ITranslationResource
     {
         private readonly IShakespeareTranslator shakespeareTranslator;
         private readonly IYodaTranslator yodaTranslator;
 
-        public PokemonTranslationResource(IShakespeareTranslator shakespeareTranslator, IYodaTranslator yodaTranslator)
+        public TranslationResource(IShakespeareTranslator shakespeareTranslator, IYodaTranslator yodaTranslator)
         {
             this.shakespeareTranslator = shakespeareTranslator;
             this.yodaTranslator = yodaTranslator;

@@ -8,7 +8,7 @@
             {
                 Name = name,
                 Description = description,
-                PokemonHabitat = habitat,
+                Habitat = habitat,
                 IsLegendary = isLegendary
             };
         }

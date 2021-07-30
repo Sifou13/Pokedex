@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using Pokedex.Services.Contract;
+using Pokedex.Services.Contract.Orchestrators;
 using Pokedex.Services.Resources.Contract;
-using System;
 using System.Threading.Tasks;
 
 //To explain this layer - Using the IDesign Methodology, this layer called Orchestrator/Manager namespace
@@ -16,11 +15,13 @@ namespace Pokedex.Services.Orchestrators
     public class PokemonInformationOrchestrator : IPokemonInformationOrchestrator
     {
         private readonly IPokemonResource pokemonResource;
+        private readonly ITranslationResource translationResource;
         private readonly IMapper mapper;
 
-        public PokemonInformationOrchestrator(IPokemonResource pokemonResource, IMapper mapper)
+        public PokemonInformationOrchestrator(IPokemonResource pokemonResource, ITranslationResource translationResource, IMapper mapper)
         {
             this.pokemonResource = pokemonResource;
+            this.translationResource = translationResource;
             this.mapper = mapper;
         }
                 
@@ -31,9 +32,28 @@ namespace Pokedex.Services.Orchestrators
             return await Task.FromResult(mapper.Map<Contract.PokemonBasic>(retrievedPokemonBasic));
         }
 
-        public Contract.PokemonBasic GetTranslatedPokemonDetails(string name)
+        //This class shows how the IDesign Methodology helps is decomposing the logical services in layer while applying some rules 
+        // to avoid circular references when the application grow and showing all the use case/requirement being in the code below 
+        public async Task<Contract.PokemonBasic> GetTranslatedPokemonDetailsAsync(string pokemonName)
         {
-            throw new NotImplementedException();
+            Resources.Contract.PokemonBasic retrievedPokemonBasic = pokemonResource.SelectByName(pokemonName);
+
+            if (retrievedPokemonBasic == null)
+                return null;
+
+            bool isEligibleForYodaTranslation = retrievedPokemonBasic.Habitat == Resources.Contract.PokemonHabitat.Cave || retrievedPokemonBasic.IsLegendary;
+
+            retrievedPokemonBasic.Description = TranslateByPokemonEligibility(isEligibleForYodaTranslation, retrievedPokemonBasic.Description) ?? retrievedPokemonBasic.Description;
+
+            return await Task.FromResult(mapper.Map<Contract.PokemonBasic>(retrievedPokemonBasic));
+        }
+
+        private string TranslateByPokemonEligibility(bool ElibibleForYodaTranslation, string pokemonDescription)
+        {
+            if (ElibibleForYodaTranslation)
+                return translationResource.TranslateUsingYoda(pokemonDescription);
+
+            return translationResource.TranslateUsingShakespeare(pokemonDescription);
         }
     }
 }

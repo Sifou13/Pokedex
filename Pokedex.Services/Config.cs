@@ -4,13 +4,12 @@ using System.Text;
 
 namespace Pokedex.Services
 {
+    //This interface will be useful to inject different implementations based on needs (Test API for UnitTesting project, etc..)
     public interface IConfig
     {
         public string PokemonAPIUrl { get; }
         
-        public string ShakespeareTranslatorUrl { get; }
-        
-        public string YodaTranslatorUrl { get; }
+        public string FunTranslationApiUrl { get; }        
     }
 
     public class Config : IConfig
@@ -22,14 +21,11 @@ namespace Pokedex.Services
             //Here - We could be loading App Level Data via Json (used to be xml) at startup when this moves to its own "physical" service
             // or use the best practice for the service host chosen
             PokemonAPIUrl = "https://pokeapi.co/api/v2/";
-            ShakespeareTranslatorUrl = "https://funtranslations.com/api/shakespeare";
-            YodaTranslatorUrl = "https://funtranslations.com/api/yoda";
+            FunTranslationApiUrl = "https://api.funtranslations.com/translate";
         }
         
         public string PokemonAPIUrl { get; }
          
-        public string ShakespeareTranslatorUrl { get ; }
-        
-        public string YodaTranslatorUrl { get ; }
+        public string FunTranslationApiUrl { get ; }
     }
 }

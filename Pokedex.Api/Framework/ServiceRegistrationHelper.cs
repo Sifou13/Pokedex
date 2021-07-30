@@ -1,10 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Pokedex.Services;
 using Pokedex.Services.Contract;
+using Pokedex.Services.Contract.Orchestrators;
 using Pokedex.Services.Orchestrators;
 using Pokedex.Services.Resources;
 using Pokedex.Services.Resources.Contract;
 using Pokedex.Services.Resources.DataAccess.Pokemon;
+using Pokedex.Services.Resources.DataAccess.Pokemon.Contract;
+using Pokedex.Services.Resources.DataAccess.Translators;
 
 namespace Pokedex.Api.Framework
 {
@@ -30,8 +33,11 @@ namespace Pokedex.Api.Framework
 
         private static void RegisterPokedexResources(this IServiceCollection services)
         {
-            services.AddScoped<IPokemonDA, PokemonDA>();
-            services.AddScoped<IPokemonResource, PokemonResource>();
+            services
+                .AddScoped<IPokemonDA, PokemonDA>()
+                .AddScoped<ITranslator, Translator>()
+                .AddScoped<ITranslationResource, TranslationResource>()
+                .AddScoped<IPokemonResource, PokemonResource>();
         }
 
         private static void RegisterPokedexOrchestrators(this IServiceCollection services)

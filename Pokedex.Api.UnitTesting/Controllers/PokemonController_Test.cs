@@ -2,7 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Pokedex.Api.Controllers;
-using Pokedex.Services.Contract;
+using Pokedex.Api.UnitTesting.UnitTestingHelpers;
+using Pokedex.Services.Contract.Orchestrators;
 using System.Threading.Tasks;
 
 namespace Pokedex.Api.UnitTesting.Controllers
@@ -51,13 +52,29 @@ namespace Pokedex.Api.UnitTesting.Controllers
 
             pokemonInformationOrchestratorMock.ExpectGetPokemonDetailsAsync(pokemonName, fakeServiceReturnedPokemon);
             
-            ActionResult<string> returnedPokemon = await pokemonController.Get(pokemonName);
+            ActionResult<Models.PokemonBasic> returnedPokemon = await pokemonController.Get(pokemonName);
 
             Assert.AreEqual(typeof(OkObjectResult), returnedPokemon.Result.GetType());
 
             Models.PokemonBasic expectedPokemon = ScenarioHelper_ApiModels.CreatePokemon(pokemonName, "We don't yet have a description for Pikachu, but we promise, it's coming soon");
 
             AssertPokemonProperties(expectedPokemon, (Models.PokemonBasic)(returnedPokemon.Result as OkObjectResult).Value);
+
+            pokemonInformationOrchestratorMock.VerifyGetPokemonDetailsAsync(pokemonName);
+        }
+
+        [TestMethod]
+        public async Task Get_IncorrectPokemonName_ServiceReturnsNull_ControllerReturnsNotFound()
+        {
+            string pokemonName = "Pikachuuuuuuu";
+
+            pokemonInformationOrchestratorMock.ExpectGetPokemonDetailsAsync(pokemonName, null);
+
+            ActionResult<Models.PokemonBasic> returnedPokemon = await pokemonController.Get(pokemonName);
+
+            Assert.AreEqual(typeof(NotFoundObjectResult), returnedPokemon.Result.GetType());
+
+            Assert.AreEqual($"We could not find a pokemon named {pokemonName}; it could be an issue on our end, so if you're convinced something went wrong, please get in touch", ((NotFoundObjectResult)returnedPokemon.Result).Value);
 
             pokemonInformationOrchestratorMock.VerifyGetPokemonDetailsAsync(pokemonName);
         }
@@ -72,6 +89,5 @@ namespace Pokedex.Api.UnitTesting.Controllers
             Assert.AreEqual(expectedPokemonBasic.Habitat, actualPokemonBasic.Habitat);
             Assert.AreEqual(expectedPokemonBasic.IsLegendary, actualPokemonBasic.IsLegendary);
         }
-
     }
 }

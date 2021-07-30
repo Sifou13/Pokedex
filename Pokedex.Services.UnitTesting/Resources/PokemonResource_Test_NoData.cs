@@ -2,7 +2,7 @@
 using Moq;
 using Pokedex.Services.Resources;
 using Pokedex.Services.Resources.Contract;
-using Pokedex.Services.Resources.DataAccess.Pokemon;
+using Pokedex.Services.Resources.DataAccess.Pokemon.Contract;
 using Pokedex.Services.UnitTesting.UnitTestingHelpers;
 
 namespace Pokedex.Services.UnitTesting.Resources
@@ -39,7 +39,7 @@ namespace Pokedex.Services.UnitTesting.Resources
 
             pokemonDAMock.ExpectSelectByName("pikachu", new PokemonRoot { Name = "pikachu", Species = new PokemonSpeciesLink { Name = "pikachu", Url = returnedSpeciesUrl } });
 
-            PokemonSpecies fakelyReturnedSpecies = new PokemonSpecies { Habitat = new Habitat { Name = Services.Resources.DataAccess.Pokemon.PokemonHabitat.Forest }, Is_Legendary = true };
+            PokemonSpecies fakelyReturnedSpecies = new PokemonSpecies { Habitat = new Habitat { Name = Services.Resources.DataAccess.Pokemon.Contract.PokemonHabitat.Forest }, Is_Legendary = true };
 
             fakelyReturnedSpecies
                 .AddFlavorTextEntry("me llamo", "es")
@@ -61,6 +61,8 @@ namespace Pokedex.Services.UnitTesting.Resources
             Services.Resources.Contract.PokemonBasic result = pokemonResource.SelectByName("pikachu");
 
             AssertPokemonProperties(expectedPokemon, result);
+            pokemonDAMock.VerifySelectByName("pikachu");
+            pokemonDAMock.VerifySelectSpeciesByUrl("pikachu");
         }
 
         [TestMethod]
@@ -79,6 +81,7 @@ namespace Pokedex.Services.UnitTesting.Resources
             Services.Resources.Contract.PokemonBasic result = pokemonResource.SelectByName("pikachu");
 
             AssertPokemonProperties(expectedPokemon, result);
+            pokemonDAMock.VerifySelectByName("pikachu");
         }
 
         [TestMethod]
@@ -97,6 +100,39 @@ namespace Pokedex.Services.UnitTesting.Resources
             Services.Resources.Contract.PokemonBasic result = pokemonResource.SelectByName("pikachu");
 
             AssertPokemonProperties(expectedPokemon, result);
+
+            pokemonDAMock.VerifySelectByName("pikachu");
+        }
+
+        [TestMethod]
+        public void SelectByName_ValidScenario_PokemonApiAggregation_CouldNotfindMatchingEnglishText_ReturnsNullDescription()
+        {
+            string returnedSpeciesUrl = "Species URL";
+
+            pokemonDAMock.ExpectSelectByName("pikachu", new PokemonRoot { Name = "pikachu", Species = new PokemonSpeciesLink { Name = "pikachu", Url = returnedSpeciesUrl } });
+
+            PokemonSpecies fakelyReturnedSpecies = new PokemonSpecies { Habitat = new Habitat { Name = Services.Resources.DataAccess.Pokemon.Contract.PokemonHabitat.Forest }, Is_Legendary = true };
+
+            fakelyReturnedSpecies
+                .AddFlavorTextEntry("me llamo", "es")
+                .AddFlavorTextEntry("mi chiamo", "it")
+                .AddFlavorTextEntry("je m'appelle", "fr");
+
+            pokemonDAMock.ExpectSelectSpeciesByUrl(returnedSpeciesUrl, fakelyReturnedSpecies);
+
+            Services.Resources.Contract.PokemonBasic expectedPokemon =
+                ScenarioHelper_ResourceContract
+                .CreatePokemonBasic(
+                    "pikachu",
+                    null,
+                    pokemonHabitat: Services.Resources.Contract.PokemonHabitat.Forest,
+                    IsLegendary: true);
+
+            Services.Resources.Contract.PokemonBasic result = pokemonResource.SelectByName("pikachu");
+
+            AssertPokemonProperties(expectedPokemon, result);
+            pokemonDAMock.VerifySelectByName("pikachu");
+            pokemonDAMock.VerifySelectSpeciesByUrl("pikachu");
         }
 
         private void AssertPokemonProperties(Services.Resources.Contract.PokemonBasic expectedPokemonBasic, Services.Resources.Contract.PokemonBasic actualPokemonBasic)

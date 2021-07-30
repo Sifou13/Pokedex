@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Pokedex.Services.Contract;
+using Pokedex.Services.Contract.Orchestrators;
 using Pokedex.Services.Resources.Contract;
 using Pokedex.Services.UnitTesting.UnitTestingHelpers;
 using System.Threading.Tasks;

@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Pokedex.Services.Resources.DataAccess.Pokemon.Contract;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Pokedex.Services.Resources.DataAccess.Pokemon;
 
 namespace Pokedex.Services.UnitTesting.UnitTestingHelpers
 {

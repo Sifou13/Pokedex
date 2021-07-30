@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pokedex.Services.Resources.DataAccess.Pokemon.Contract;
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 

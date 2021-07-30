@@ -1,6 +1,6 @@
 ﻿using Pokedex.Services.Contract;
 
-namespace Pokedex.Api.UnitTesting
+namespace Pokedex.Api.UnitTesting.UnitTestingHelpers
 {
     public static class ScenarioHelper_PokedexServiceContract
     {

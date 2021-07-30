@@ -9,10 +9,10 @@ namespace Pokedex.Api.Controllers
     [Route("api/[controller]")]
     public class PokemonController : ControllerBase
     {
-        private readonly Services.Contract.IPokemonInformationOrchestrator pokemonInformationOrchestrator;
+        private readonly Services.Contract.Orchestrators.IPokemonInformationOrchestrator pokemonInformationOrchestrator;
         private readonly IMapper mapper;
 
-        public PokemonController(Services.Contract.IPokemonInformationOrchestrator pokemonInformationOrchestrator, IMapper mapper)
+        public PokemonController(Services.Contract.Orchestrators.IPokemonInformationOrchestrator pokemonInformationOrchestrator, IMapper mapper)
         {
             this.pokemonInformationOrchestrator = pokemonInformationOrchestrator;
             this.mapper = mapper;
@@ -29,13 +29,14 @@ namespace Pokedex.Api.Controllers
         }
 
         [HttpGet("{pokemonName}")]
-        public async Task<ActionResult<string>> Get(string pokemonName)
+        public async Task<ActionResult<Models.PokemonBasic>> Get(string pokemonName)
         {
-            Services.Contract.PokemonBasic retrievePokemonFromService = await pokemonInformationOrchestrator.GetPokemonDetailsAsync(pokemonName); 
+            Services.Contract.PokemonBasic retrievePokemonFromService = await pokemonInformationOrchestrator.GetPokemonDetailsAsync(pokemonName);
 
-            Models.PokemonBasic result = mapper.Map<Models.PokemonBasic>(retrievePokemonFromService);
+            if (retrievePokemonFromService == null)
+                return NotFound($"We could not find a pokemon named {pokemonName}; it could be an issue on our end, so if you're convinced something went wrong, please get in touch");
 
-            return Ok(result);
+            return Ok(mapper.Map<Models.PokemonBasic>(retrievePokemonFromService));
         }
     }
 }

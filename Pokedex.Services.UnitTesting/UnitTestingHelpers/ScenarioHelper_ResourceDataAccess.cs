@@ -1,13 +1,15 @@
-﻿namespace Pokedex.Services.UnitTesting.UnitTestingHelpers
+﻿using Pokedex.Services.Resources.DataAccess.Pokemon.Contract;
+
+namespace Pokedex.Services.UnitTesting.UnitTestingHelpers
 {
     public static class ScenarioHelper_ResourceDataAccess
     {
-        public static Services.Resources.DataAccess.Pokemon.PokemonRoot CreatePokemonBasic(string name, string species = null, string url = null)
+        public static PokemonRoot CreatePokemonBasic(string name, string species = null, string url = null)
         {  
-            return new Services.Resources.DataAccess.Pokemon.PokemonRoot
+            return new PokemonRoot
             {
                 Name = name,
-                Species = new Services.Resources.DataAccess.Pokemon.PokemonSpeciesLink
+                Species = new PokemonSpeciesLink
                 {
                     Name = species ?? "Pokemon",
                     Url = url ?? "Specific Species URL"

@@ -6,6 +6,7 @@ using Pokedex.Services.UnitTesting.UnitTestingHelpers;
 
 namespace Pokedex.Services.UnitTesting.Resources
 {
+    //Only use in CI with Test APIs set in Config (so ideally, will move out of this project when integrated on pipeline)
     //This test class is used to test the mappings developper adds to data layer object (db column) 
     //  by testing at resource level with real implementation for dependencies, the DA classes are tested directly here
     //  On the long run this can pick up on missing script    

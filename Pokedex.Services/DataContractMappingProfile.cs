@@ -9,8 +9,8 @@ namespace Pokedex.Services
             CreateMap<Contract.PokemonBasic, Resources.Contract.PokemonBasic>().ReverseMap();
             CreateMap<Contract.PokemonHabitat, Resources.Contract.PokemonHabitat>().ReverseMap();
 
-            CreateMap<Resources.Contract.PokemonBasic, Resources.DataAccess.Pokemon.PokemonRoot>().ReverseMap();
-            CreateMap<Resources.Contract.PokemonHabitat, Resources.DataAccess.Pokemon.PokemonHabitat>().ReverseMap();
+            CreateMap<Resources.Contract.PokemonBasic, Resources.DataAccess.Pokemon.Contract.PokemonRoot>().ReverseMap();
+            CreateMap<Resources.Contract.PokemonHabitat, Resources.DataAccess.Pokemon.Contract.PokemonHabitat>().ReverseMap();
         }
     }
 }

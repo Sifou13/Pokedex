@@ -1,4 +1,4 @@
-﻿namespace Pokedex.Api.UnitTesting
+﻿namespace Pokedex.Api.UnitTesting.UnitTestingHelpers
 {
     public class ScenarioHelper_ApiModels
     {

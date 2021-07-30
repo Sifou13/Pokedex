@@ -18,7 +18,7 @@ namespace Pokedex.Services.UnitTesting
         [TestMethod]
         public void Assert_PokemonHabitatEnum_PublicContract_ResourceDataAccess_AreEqual()
         {
-            Assert.IsTrue(((Contract.PokemonHabitat[])Enum.GetValues(typeof(Contract.PokemonHabitat))).SequenceEqual((Contract.PokemonHabitat[])Enum.GetValues(typeof(Services.Resources.DataAccess.Pokemon.PokemonHabitat))));
+            Assert.IsTrue(((Contract.PokemonHabitat[])Enum.GetValues(typeof(Contract.PokemonHabitat))).SequenceEqual((Contract.PokemonHabitat[])Enum.GetValues(typeof(Services.Resources.DataAccess.Pokemon.Contract.PokemonHabitat))));
         }
     }
 }

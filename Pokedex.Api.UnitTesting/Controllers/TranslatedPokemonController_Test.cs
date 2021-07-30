@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Pokedex.Api.Controllers;
+using Pokedex.Api.UnitTesting.UnitTestingHelpers;
 using System.Threading.Tasks;
 
 namespace Pokedex.Api.UnitTesting.Controllers
@@ -9,17 +11,14 @@ namespace Pokedex.Api.UnitTesting.Controllers
     public class TranslatedPokemonController_Test
     {
         private TranslatedPokemonController translatedPokemonController;
+        private Mock<Services.Contract.Orchestrators.IPokemonInformationOrchestrator> pokemonInformationOrchestratorMock;
 
         [TestInitialize]
         public void Initialize()
         {
-            translatedPokemonController = new TranslatedPokemonController();
-        }
+            pokemonInformationOrchestratorMock = new Mock<Services.Contract.Orchestrators.IPokemonInformationOrchestrator>(MockBehavior.Strict);
 
-        [TestCleanup]
-        public void Cleanup()
-        {
-            //Reminder - To verify all your mocks and clear any other context dependencies as soon as you make use of them in UT
+            translatedPokemonController = UnitTestSetupHelper.CreateTranslatedPokemonController(pokemonInformationOrchestratorMock);
         }
 
         [TestMethod]
@@ -35,16 +34,50 @@ namespace Pokedex.Api.UnitTesting.Controllers
         }
 
         [TestMethod]
-        public async Task Get_RequestForPokemonName_ReturnsOkStatusWithStringStatingTheApiIsNotReadyYet()
+        public async Task Get_Pikachu_ReturnsOkStatusWithExpectedPokemonBasicDetails()
         {
-            string expectedTemporaryTranslatedPokemonResponse = $"Sorry, Mewtwo's information have not yet been made available.....so, we can't yet translate their desription, bare with us.";
+            string pokemonName = "Pikachu";
 
-            ActionResult<string> result = await translatedPokemonController.Get("Mewtwo");
+            Pokedex.Services.Contract.PokemonBasic fakeServiceReturnedPokemon = ScenarioHelper_PokedexServiceContract.CreatePokemonBasic(pokemonName, "Pikachu's translated description");
 
-            Assert.AreEqual(typeof(OkObjectResult), result.Result.GetType());
+            pokemonInformationOrchestratorMock.ExpectGetTranslatedPokemonDetailsAsync(pokemonName, fakeServiceReturnedPokemon);
 
-            Assert.AreEqual(expectedTemporaryTranslatedPokemonResponse, (result.Result as OkObjectResult).Value);
+            ActionResult<Models.PokemonBasic> returnedPokemon = await translatedPokemonController.Get(pokemonName);
+
+            Assert.AreEqual(typeof(OkObjectResult), returnedPokemon.Result.GetType());
+
+            Models.PokemonBasic expectedPokemon = ScenarioHelper_ApiModels.CreatePokemon(pokemonName, "Pikachu's translated description");
+
+            AssertPokemonProperties(expectedPokemon, (Models.PokemonBasic)(returnedPokemon.Result as OkObjectResult).Value);
+
+            pokemonInformationOrchestratorMock.VerifyGetPokemonDetailsAsync(pokemonName);
         }
 
+        [TestMethod]
+        public async Task Get_IncorrectPokemonName_ServiceReturnsNull_ControllerReturnsNotFound()
+        {
+            string pokemonName = "Pikachuuuuuuu";
+
+            pokemonInformationOrchestratorMock.ExpectGetTranslatedPokemonDetailsAsync(pokemonName, null);
+
+            ActionResult<Models.PokemonBasic> returnedPokemon = await translatedPokemonController.Get(pokemonName);
+
+            Assert.AreEqual(typeof(NotFoundObjectResult), returnedPokemon.Result.GetType());
+
+            Assert.AreEqual($"We could not find a pokemon named {pokemonName}; it could be an issue on our end, so if you're convinced something went wrong, please get in touch", ((NotFoundObjectResult)returnedPokemon.Result).Value);
+
+            pokemonInformationOrchestratorMock.VerifyGetPokemonDetailsAsync(pokemonName);
+        }
+
+        private void AssertPokemonProperties(Models.PokemonBasic expectedPokemonBasic, Models.PokemonBasic actualPokemonBasic)
+        {
+            Assert.IsNotNull(expectedPokemonBasic);
+            Assert.IsNotNull(actualPokemonBasic);
+
+            Assert.AreEqual(expectedPokemonBasic.Name, actualPokemonBasic.Name);
+            Assert.AreEqual(expectedPokemonBasic.Description, actualPokemonBasic.Description);
+            Assert.AreEqual(expectedPokemonBasic.Habitat, actualPokemonBasic.Habitat);
+            Assert.AreEqual(expectedPokemonBasic.IsLegendary, actualPokemonBasic.IsLegendary);
+        }
     }
 }

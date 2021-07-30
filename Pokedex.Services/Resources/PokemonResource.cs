@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
+using Pokedex.Services.Resources.DataAccess.Pokemon.Contract;
 using System.Linq;
 
 namespace Pokedex.Services.Resources
 {
     public class PokemonResource : Contract.IPokemonResource
     {
-        private readonly DataAccess.Pokemon.IPokemonDA pokemonDA;
+        private readonly IPokemonDA pokemonDA;
         
-        public PokemonResource(DataAccess.Pokemon.IPokemonDA pokemonDA)
+        public PokemonResource(IPokemonDA pokemonDA)
         {
             this.pokemonDA = pokemonDA;
         }
@@ -17,7 +18,7 @@ namespace Pokedex.Services.Resources
         //or to act, for example as Data layer orchestrator - can be seen as a join        
         public Contract.PokemonBasic SelectByName(string name)
         {
-            DataAccess.Pokemon.PokemonRoot retrievedPokemonRoot = pokemonDA.SelectByName(name).Result;
+            PokemonRoot retrievedPokemonRoot = pokemonDA.SelectByName(name).Result;
 
             if (retrievedPokemonRoot == null)
                 return null;
@@ -32,7 +33,7 @@ namespace Pokedex.Services.Resources
             //Here we retrieve the species using the url provided in the previous Api call request's response so
             //that we only have to maintain the entry point in config and allow for API structure changes at the provider/third party's end 
 
-            DataAccess.Pokemon.PokemonSpecies species = pokemonDA.SelectSpeciesByUrl(retrievedPokemonRoot.Species.Url).Result;
+            PokemonSpecies species = pokemonDA.SelectSpeciesByUrl(retrievedPokemonRoot.Species.Url).Result;
 
             //Here we can see by hardcoding this property here for this demo, that if we were a product manager takig the 
             // product to the next level, we could introduce another endpoint taking a language as well and returning the first

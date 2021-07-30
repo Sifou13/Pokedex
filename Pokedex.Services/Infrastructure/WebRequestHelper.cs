@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -14,9 +19,9 @@ namespace Pokedex.Services.Infrastructure
     {
         private static HttpClient httpClient;
 
-        public static async Task<T> GetResponse<T>(string url, JsonSerializerOptions jsonSerializerOptions = null) where T : class
+        public static async Task<T> Get<T>(string url, Dictionary<string,string> queryStrings = null, JsonSerializerOptions jsonSerializerOptions = null) where T : class
         {
-            HttpResponseMessage httpResponse = await GetHttpResponse(url);
+            HttpResponseMessage httpResponse = await GetHttpResponse(url, queryStrings);
 
             Stream result;
 
@@ -29,10 +34,10 @@ namespace Pokedex.Services.Infrastructure
                                 
                 return await JsonSerializer.DeserializeAsync<T>(result, jsonSerializerOptions);
             }
-            catch (Exception exception)
-            {   
-                //Rethrowing exception up the stack for better error handling and user experience on the front end and friendly responses on Apis
-                throw new Exception($"There was an issue while getting a response from {url}: {exception.Message}");
+            catch
+            {
+                //Rethrowing exception up the stack for without better error handling, troubleshooting (stack is preserved when using throw alone) and user experience on the front end and friendly responses on Apis
+                throw;
             }
             finally
             {
@@ -40,12 +45,45 @@ namespace Pokedex.Services.Infrastructure
             }
         }
 
-        private static async Task<HttpResponseMessage> GetHttpResponse(string url)
+        private static async Task<HttpResponseMessage> GetHttpResponse(string url, Dictionary<string, string> queryStrings)
         {
-            httpClient = httpClient ?? new HttpClient();
-            HttpResponseMessage httpResponse = await httpClient.GetAsync(url);
-            
+            httpClient ??= new HttpClient();
+
+            string sanitizedQueryString = GenerateQueryString(queryStrings);
+
+            string requestUrl = $"{url}{sanitizedQueryString}";
+
+            HttpResponseMessage httpResponse = await httpClient.GetAsync(requestUrl);
+
             return httpResponse;
+        }
+
+        private static string GenerateQueryString(Dictionary<string, string> queryStrings)
+        {
+            if (queryStrings == null || !queryStrings.Any())
+                return string.Empty;
+            
+            StringBuilder queryStringBuilder = new StringBuilder("?");
+
+            foreach(KeyValuePair<string, string> queryString in queryStrings)
+            {
+                queryStringBuilder.Append(queryString.Key);
+                queryStringBuilder.Append("=");
+                queryStringBuilder.Append(SanitizeQueryString(queryString.Value));
+                queryStringBuilder.Append("&");
+            }
+
+            return queryStringBuilder.ToString();
+        }
+
+        private static string SanitizeQueryString(string queryString)
+        {
+            if (string.IsNullOrEmpty(queryString))
+                return string.Empty;
+
+            string flattenedQueryString = queryString.Replace("\n", " ").Replace("\f", " ").Replace("\r", " ");
+
+            return $"{Uri.EscapeUriString(flattenedQueryString)}";
         }
     }
 }

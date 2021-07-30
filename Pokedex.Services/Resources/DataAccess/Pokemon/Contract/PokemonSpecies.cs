@@ -1,4 +1,4 @@
-﻿namespace Pokedex.Services.Resources.DataAccess.Pokemon
+﻿namespace Pokedex.Services.Resources.DataAccess.Pokemon.Contract
 {
     public class PokemonSpecies
     {

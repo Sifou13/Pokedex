@@ -6,6 +6,8 @@ namespace Pokedex.Services.Resources.Contract
 {
     public interface ITranslationResource
     {
-        string Translate(string textToTranslate, Resources.Contract.PokemonHabitat habitat);
+        string TranslateUsingShakespeare(string textToTranslate);
+        
+        string TranslateUsingYoda(string textToTranslate);
     }
 }

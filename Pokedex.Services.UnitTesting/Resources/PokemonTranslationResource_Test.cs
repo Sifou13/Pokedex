@@ -3,22 +3,21 @@ using Pokedex.Services.Resources;
 using Pokedex.Services.Resources.Contract;
 using Pokedex.Services.Resources.DataAccess.Translators;
 
+//This is added a skeleton to show that something need to be done here:
+// due to rate limit we can not test directly, so like in other places,
+// we need to mock the web requests but also have some real test in CI pipelines (depending on strategy/frequency of deployment)
 namespace Pokedex.Services.UnitTesting.Resources
 {
     [TestClass]
     public class PokemonTranslationResource_Test
     {
         private ITranslationResource pokemonTranslationResource;
-        private IShakespeareTranslator shakespeareTranslator;
-        private IYodaTranslator yodaTranslator;
+        private ITranslator translator;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            shakespeareTranslator = new ShakespeareTranslator();
-            yodaTranslator = new YodaTranslator();
-
-            pokemonTranslationResource = new TranslationResource(shakespeareTranslator, yodaTranslator);
+            pokemonTranslationResource = new TranslationResource(translator);
         }
 
         [TestCleanup]

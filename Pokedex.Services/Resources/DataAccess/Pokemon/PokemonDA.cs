@@ -1,15 +1,9 @@
-﻿using System.Text.Json;
+﻿using Pokedex.Services.Resources.DataAccess.Pokemon.Contract;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Pokedex.Services.Resources.DataAccess.Pokemon
-{
-    public interface IPokemonDA
-    {
-        Task<PokemonRoot> SelectByName(string name);
-
-        Task<PokemonSpecies> SelectSpeciesByUrl(string url);
-    }
-
+{    
     public class PokemonDA : IPokemonDA
     {
         private readonly string PokemonRelativePath = "pokemon/";
@@ -25,12 +19,12 @@ namespace Pokedex.Services.Resources.DataAccess.Pokemon
         {
             string requestedPokemonApiUrl = $"{config.PokemonAPIUrl}{PokemonRelativePath}{name.ToLower()}";
 
-            return await Infrastructure.WebRequestHelper.GetResponse<PokemonRoot>(requestedPokemonApiUrl, CreateJsonOptions());
+            return await Infrastructure.WebRequestHelper.Get<PokemonRoot>(requestedPokemonApiUrl, jsonSerializerOptions: CreateJsonOptions());
         }
 
         public async Task<PokemonSpecies> SelectSpeciesByUrl(string url)
         {
-            return await Infrastructure.WebRequestHelper.GetResponse<PokemonSpecies>(url, CreateJsonOptions());
+            return await Infrastructure.WebRequestHelper.Get<PokemonSpecies>(url, jsonSerializerOptions: CreateJsonOptions());
         }
 
         private JsonSerializerOptions CreateJsonOptions()

@@ -1,5 +1,7 @@
 ﻿namespace Pokedex.Api.Models
 {
+    public class PokemonBasicTranslated : PokemonBasic { }
+
     public class PokemonBasic
     {
         public string Name { get; set; }

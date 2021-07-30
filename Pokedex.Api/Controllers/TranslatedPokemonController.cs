@@ -11,11 +11,15 @@ namespace Pokedex.Api.Controllers
     {
         private readonly Services.Contract.Orchestrators.IPokemonInformationOrchestrator pokemonInformationOrchestrator;
         private readonly IMapper mapper;
+        private readonly ICacheService cacheService;
 
-        public TranslatedPokemonController(Services.Contract.Orchestrators.IPokemonInformationOrchestrator pokemonInformationOrchestrator, IMapper mapper)
+        public TranslatedPokemonController(Services.Contract.Orchestrators.IPokemonInformationOrchestrator pokemonInformationOrchestrator, 
+                                           IMapper mapper,
+                                           ICacheService cacheService)
         {
             this.pokemonInformationOrchestrator = pokemonInformationOrchestrator;
             this.mapper = mapper;
+            this.cacheService = cacheService;
         }
 
         [HttpGet]
@@ -29,14 +33,25 @@ namespace Pokedex.Api.Controllers
         [HttpGet("{pokemonName}")]
         public async Task<ActionResult<Models.PokemonBasic>> Get(string pokemonName)
         {
-            Services.Contract.PokemonBasic result;
+            string translationCacheKey = $"{ InternalDataContracts.CacheKeys.TranslatedPokemonCacheKeyPreffix}{ pokemonName }";
 
-            result = await pokemonInformationOrchestrator.GetTranslatedPokemonDetailsAsync(pokemonName);
+            Models.PokemonBasic translatedPokemonBasicCacheValue = cacheService.TryGetValue<Models.PokemonBasic>(translationCacheKey);
+
+            if (translatedPokemonBasicCacheValue == null)
+            {
+                Services.Contract.PokemonBasic translatedPokemonFromService = await pokemonInformationOrchestrator.GetTranslatedPokemonDetailsAsync(pokemonName);
+
+                if (translatedPokemonFromService == null)
+                    return NotFound($"We could not find a pokemon named {pokemonName}; it could be an issue on our end, so if you're convinced something went wrong, please get in touch");
+
+                Models.PokemonBasic returnValue = mapper.Map<Models.PokemonBasic>(translatedPokemonFromService);
+
+                cacheService.Set(translationCacheKey, returnValue);
+
+                return Ok(returnValue);
+            }
             
-            if (result == null)
-                return NotFound($"We could not find a pokemon named {pokemonName}; it could be an issue on our end, so if you're convinced something went wrong, please get in touch");
-
-            return Ok(mapper.Map<Models.PokemonBasic>(result));
+            return Ok(translatedPokemonBasicCacheValue);
         }
     }
 }

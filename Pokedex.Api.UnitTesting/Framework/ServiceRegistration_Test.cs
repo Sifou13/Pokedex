@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Pokedex.Api.Framework;
 using System;
@@ -8,10 +11,11 @@ using System.Text;
 
 namespace Pokedex.Api.UnitTesting.Framework
 {
-    //This test should in theory move to to the Service Test project, once it is hosted in isolation and exposed via physical services (REST, gRPC)
+    
     [TestClass]
     public class ServiceRegistration_Test
     {
+        //This test should in theory move to to the Service Test project, once it is hosted in isolation and exposed via physical services (REST, gRPC)
         [TestMethod]
         public void ServiceRegistrationHelper_ResolveServiceContractToResolveAndVerifyDependencyChain_PreventMissingRegistration_Success()
         {

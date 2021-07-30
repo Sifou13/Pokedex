@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pokedex.Api.Framework;
@@ -7,7 +8,7 @@ using Pokedex.Api.Framework;
 namespace Pokedex.Api
 {
     public class Startup
-    {
+    {   
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(typeof(Pokedex.Services.DataContractMappingProfile), typeof(Framework.ServicesMappingProfile));
@@ -16,7 +17,9 @@ namespace Pokedex.Api
             // and keep this class readable
             services.RegisterPokedexServices();
 
-            services.AddControllers();            
+            services.AddControllers();
+
+            services.AddMemoryCache();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

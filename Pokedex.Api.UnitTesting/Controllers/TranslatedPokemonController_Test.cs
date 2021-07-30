@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Pokedex.Api.Controllers;
+using Pokedex.Api.Framework;
 using Pokedex.Api.UnitTesting.UnitTestingHelpers;
 using System.Threading.Tasks;
 
@@ -12,13 +13,15 @@ namespace Pokedex.Api.UnitTesting.Controllers
     {
         private TranslatedPokemonController translatedPokemonController;
         private Mock<Services.Contract.Orchestrators.IPokemonInformationOrchestrator> pokemonInformationOrchestratorMock;
+        private Mock<ICacheService> cacheServiceMock;
 
         [TestInitialize]
         public void Initialize()
         {
             pokemonInformationOrchestratorMock = new Mock<Services.Contract.Orchestrators.IPokemonInformationOrchestrator>(MockBehavior.Strict);
+            cacheServiceMock = new Mock<ICacheService>(MockBehavior.Strict);
 
-            translatedPokemonController = UnitTestSetupHelper.CreateTranslatedPokemonController(pokemonInformationOrchestratorMock);
+            translatedPokemonController = UnitTestSetupHelper.CreateTranslatedPokemonController(pokemonInformationOrchestratorMock, cacheServiceMock);
         }
 
         [TestMethod]
@@ -34,13 +37,42 @@ namespace Pokedex.Api.UnitTesting.Controllers
         }
 
         [TestMethod]
-        public async Task Get_Pikachu_ReturnsOkStatusWithExpectedPokemonBasicDetails()
+        public async Task Get_Pikachu_NotCached_GetsTranslatedPokemonFromPokedexService_SetValueInCacheAndReturnsExpectedTranslatedPokemon()
         {
             string pokemonName = "Pikachu";
+
+            cacheServiceMock.ExpectTryGetValue(GetPokemonNameCacheKey(pokemonName), null);
 
             Pokedex.Services.Contract.PokemonBasic fakeServiceReturnedPokemon = ScenarioHelper_PokedexServiceContract.CreatePokemonBasic(pokemonName, "Pikachu's translated description");
 
             pokemonInformationOrchestratorMock.ExpectGetTranslatedPokemonDetailsAsync(pokemonName, fakeServiceReturnedPokemon);
+
+            Models.PokemonBasic pokemonCacheValue = ScenarioHelper_ApiModels.CreatePokemon(pokemonName, "Pikachu's translated description");
+
+            cacheServiceMock.ExpectSet(GetPokemonNameCacheKey(pokemonName), pokemonCacheValue);
+            
+            ActionResult<Models.PokemonBasic> returnedPokemon = await translatedPokemonController.Get(pokemonName);
+
+            Assert.AreEqual(typeof(OkObjectResult), returnedPokemon.Result.GetType());
+
+            Models.PokemonBasic expectedPokemon = ScenarioHelper_ApiModels.CreatePokemon(pokemonName, "Pikachu's translated description");
+
+            AssertPokemonProperties(expectedPokemon, (Models.PokemonBasic)(returnedPokemon.Result as OkObjectResult).Value);
+
+            pokemonInformationOrchestratorMock.VerifyGetPokemonDetailsAsync(pokemonName);
+
+            cacheServiceMock.VerifyTryGetValue(GetPokemonNameCacheKey(pokemonName));
+            cacheServiceMock.VerifySet(GetPokemonNameCacheKey(pokemonName), pokemonCacheValue);
+        }
+
+        [TestMethod]
+        public async Task Get_Pikachu_ValueCached_RetrievesTranslatedPokemonFromCache_ReturnsExpectedTranslatedPokemonWithoutCallingPokedexService()
+        {
+            string pokemonName = "Pikachu";
+
+            Models.PokemonBasic pokemonCacheValue = ScenarioHelper_ApiModels.CreatePokemon(pokemonName, "Pikachu's translated description");
+
+            cacheServiceMock.ExpectTryGetValue(GetPokemonNameCacheKey(pokemonName), pokemonCacheValue);
 
             ActionResult<Models.PokemonBasic> returnedPokemon = await translatedPokemonController.Get(pokemonName);
 
@@ -51,12 +83,16 @@ namespace Pokedex.Api.UnitTesting.Controllers
             AssertPokemonProperties(expectedPokemon, (Models.PokemonBasic)(returnedPokemon.Result as OkObjectResult).Value);
 
             pokemonInformationOrchestratorMock.VerifyGetPokemonDetailsAsync(pokemonName);
+
+            cacheServiceMock.VerifyTryGetValue(GetPokemonNameCacheKey(pokemonName));
         }
 
         [TestMethod]
         public async Task Get_IncorrectPokemonName_ServiceReturnsNull_ControllerReturnsNotFound()
         {
             string pokemonName = "Pikachuuuuuuu";
+
+            cacheServiceMock.ExpectTryGetValue(GetPokemonNameCacheKey(pokemonName), null);
 
             pokemonInformationOrchestratorMock.ExpectGetTranslatedPokemonDetailsAsync(pokemonName, null);
 
@@ -79,5 +115,11 @@ namespace Pokedex.Api.UnitTesting.Controllers
             Assert.AreEqual(expectedPokemonBasic.Habitat, actualPokemonBasic.Habitat);
             Assert.AreEqual(expectedPokemonBasic.IsLegendary, actualPokemonBasic.IsLegendary);
         }
+
+        private static string GetPokemonNameCacheKey(string pokemonName)
+        {
+            return $"{InternalDataContracts.CacheKeys.TranslatedPokemonCacheKeyPreffix}{pokemonName}";
+        }
+
     }
 }

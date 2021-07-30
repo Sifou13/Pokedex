@@ -17,18 +17,22 @@ namespace Pokedex.Api.Framework
         {
             services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
 
-            //We would not do this for a production service, we should in fact be usind a service (Possibly gRPC since WCF has been left out of .Net Core,
-            //which I have not used yet) using publicly exposed contract and not the full dll - Generally via proxy
-            //Keeping this in production would defeat the way the solution was designed
-            
+            //These two dependencies could be extracted to a framework project as it will be relevant to more than just this Api project (csproj)
+            services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+            services.AddSingleton<ICacheService, CacheService>();
+
             services.RegisterConfig();
             services.RegisterPokedexResources();
             services.RegisterPokedexOrchestrators();
         }
 
+        //We would not do this for a production service, we should in fact be usind a service (Possibly gRPC since WCF has been left out of .Net Core),
+        //which I have not used yet) using publicly exposed contract and not the service's implementations - Generally via proxy
+        //Keeping this in production would defeat the way the solution was designed
+        #region Pokedex Service
         private static void RegisterConfig(this IServiceCollection services)
         {
-            services.AddScoped<IConfig, Config>();
+            services.AddSingleton<IConfig, Config>();
         }
 
         private static void RegisterPokedexResources(this IServiceCollection services)
@@ -44,5 +48,6 @@ namespace Pokedex.Api.Framework
         {
             services.AddScoped<IPokemonInformationOrchestrator, PokemonInformationOrchestrator>();
         }
+        #endregion
     }
 }

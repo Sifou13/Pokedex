@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System;
 
 namespace Pokedex.Api.Framework
 {
@@ -7,6 +8,9 @@ namespace Pokedex.Api.Framework
         public ServicesMappingProfile()
         {
             //not reversed since only needing one way for now
+            CreateMap<Pokedex.Services.Contract.PokemonBasic, Models.PokemonBasic>();
+
+            //When Setting Cache
             CreateMap<Pokedex.Services.Contract.PokemonBasic, Models.PokemonBasic>();
         }
     }

@@ -17,7 +17,9 @@ namespace Pokedex.Api
             // and keep this class readable
             services.RegisterPokedexServices();
 
-            services.AddControllers();
+            services
+                .AddControllers()
+                .AddJsonOptions(opt => opt.JsonSerializerOptions.Converters.Add(new Framework.JsonConverters.PokemonHabitatEnumJsonConverter()));
 
             services.AddMemoryCache();
         }

@@ -1,4 +1,6 @@
-﻿namespace Pokedex.Api.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Pokedex.Api.Models
 {
     public class PokemonBasicTranslated : PokemonBasic { }
 
@@ -8,6 +10,7 @@
 
         public string Description { get; set; }
 
+        [JsonConverter(typeof(Framework.JsonConverters.PokemonHabitatEnumJsonConverter))]
         public PokemonHabitat Habitat { get; set; }
 
         public bool IsLegendary { get; set; }

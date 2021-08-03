@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 //Infrastructure Code should in theory be moved to a different library project and tested in isolation, and often, when a  team grows
 // it end up owned by the Leads/Seniors and/or an Architecture team since such a project is where most of the plumming and infrastructure 
 // abstraction resides
-namespace Pokedex.Services.Infrastructure
+namespace Pokedex.Infrastructure.DataAccess
 {
     public static class WebRequestHelper
     {

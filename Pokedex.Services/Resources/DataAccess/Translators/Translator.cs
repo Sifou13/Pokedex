@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pokedex.Infrastructure.DataAccess;
+using System;
 using System.Collections.Generic;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -51,7 +52,7 @@ namespace Pokedex.Services.Resources.DataAccess.Translators
 
             try
             {
-                return await Infrastructure.WebRequestHelper.Get<Contract.TranslationResult>(requestedUrl, queryStrings, CreateJsonOptions());
+                return await WebRequestHelper.Get<Contract.TranslationResult>(requestedUrl, queryStrings, CreateJsonOptions());
             }
             catch 
             {

@@ -15,7 +15,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PokedexService", "PokedexSe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pokedex.Services.UnitTesting", "Pokedex.Services.UnitTesting\Pokedex.Services.UnitTesting.csproj", "{578167FB-3ADC-4977-AB8C-41D075CB6BF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pokedex.Api.UnitTesting", "Pokedex.Api.UnitTesting\Pokedex.Api.UnitTesting.csproj", "{B9D729B0-131E-48B1-A7FD-E808A1A26216}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pokedex.Api.UnitTesting", "Pokedex.Api.UnitTesting\Pokedex.Api.UnitTesting.csproj", "{B9D729B0-131E-48B1-A7FD-E808A1A26216}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D9DCEF2B-17BF-43FA-BA71-B8CA346AE45B}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

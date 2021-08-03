@@ -22,6 +22,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{372FB7C4-88A9-4E33-874A-1C0B214EE062}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pokedex.Infrastructure", "Pokedex.Infrastructure\Pokedex.Infrastructure.csproj", "{968314E6-64FA-4252-9E08-4826E0D93342}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +52,10 @@ Global
 		{B9D729B0-131E-48B1-A7FD-E808A1A26216}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9D729B0-131E-48B1-A7FD-E808A1A26216}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9D729B0-131E-48B1-A7FD-E808A1A26216}.Release|Any CPU.Build.0 = Release|Any CPU
+		{968314E6-64FA-4252-9E08-4826E0D93342}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{968314E6-64FA-4252-9E08-4826E0D93342}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{968314E6-64FA-4252-9E08-4826E0D93342}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{968314E6-64FA-4252-9E08-4826E0D93342}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +66,7 @@ Global
 		{65B31E4B-8DAB-4FD9-9D80-3CD592C06A9C} = {0D082EF6-99B6-4F2B-9926-AB961EA718A8}
 		{578167FB-3ADC-4977-AB8C-41D075CB6BF5} = {0D082EF6-99B6-4F2B-9926-AB961EA718A8}
 		{B9D729B0-131E-48B1-A7FD-E808A1A26216} = {88014C32-99AB-465C-A8B1-93A642A0ACDF}
+		{968314E6-64FA-4252-9E08-4826E0D93342} = {372FB7C4-88A9-4E33-874A-1C0B214EE062}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {41DEA851-D11C-4F42-9359-C69537956423}

@@ -4,6 +4,7 @@ namespace Pokedex.Services
 {
     public class DataContractMappingProfile : Profile
     {
+        //This should actually be replaced by some infrastructure code that deep copy object into others and extend 
         public DataContractMappingProfile()
         {
             CreateMap<Contract.PokemonBasic, Resources.Contract.PokemonBasic>().ReverseMap();

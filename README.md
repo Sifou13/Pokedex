@@ -42,13 +42,11 @@ The third party dependencies used by the different projects so far are as follow
 The below steps assume you have Docker installed on your local machine.
 <br/>
 
-How To run this application on Windows:
-
 - **Clone Repository to local**
 - Navigate to the repository on your local - you need to be at the root of the repository folder, where the  solution file (Pokedex.sln) file can be found.
 - Create a Docker image using the command below; note that this step will be using the DockerFile file found in this folder to create the immage:
   - **docker.exe build -t pokedex .**
-  - if this steps fails because of some networking issues, please refer to the "Possible Known Build Issues" --> "Networking - **Change Local Network Adapter Interface Metric**" below, this could be caused since this container will use the internet to retrieve data and docker build will try to map the container to the first network adapter it finds (the lowest interface metric), which may not be appropriate (i.e. No Internet) 
+  - if you are running on Windows and this steps fails because of some networking issues, please refer to the "Possible Known Build Issues" --> "Networking - **Change Local Network Adapter Interface Metric**" below, this could be caused since this container will use the internet to retrieve data and docker build will try to map the container to the first network adapter it finds (the lowest interface metric), which may not be appropriate (i.e. No Internet) 
   - now, your machine should contain a few docker images which compose the "pokedex" docker image that we will use in the next step.
 - Now, time to run an instance of our Docker image - run the following:
   - **docker run -it --rm -p 5000:80 --name pokedex-instance pokedex**

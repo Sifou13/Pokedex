@@ -39,6 +39,8 @@ The third party dependencies used by the different projects so far are as follow
 - Moq (Unit Testing Projects)
 
 
+
+
 **How to Run it?**
 
 The below steps assume you have Docker installed on your local machine.
@@ -57,6 +59,10 @@ How To run this application on Windows:
   - now, you can start using the api endpoints; here are two examples you can start with
     - http://localhost:5000/api/pokemon/pikachu
     - http://localhost:5000/api/pokemon/translated/pikachu
+
+
+
+
 
 
 **Possible Known Build Issues** 

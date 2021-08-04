@@ -1,7 +1,5 @@
 # Pokedex
 
-**Intro**
-
 This application was created and designed to showcase and create a discussion around Software Architecture, Design and Software Engineering principles, methodologies and also help in touching on team level (scaling engineers) and business level implications (i.e.Devops business requirements); 
 
 This can therefore be used as a support to drive an interview where a hiring manager could review the work done on here, while asking further question around the specifics requirement built in the app.
@@ -9,10 +7,9 @@ This can therefore be used as a support to drive an interview where a hiring man
 To showcase distributed team organisation as well as software lifecycle, Gihub Issues were also created and pull requests mapped back to issues, so that it reflects what normally happen when developing in a comercial context. 
 
 As this was a single man's initial project, there was no code review involved from peers, the best ally to mitigate this quality lack had to be the unit tests with sufficient code and use case coverage. 
+<br/><br/>
 
-
-
-**The Application**
+# What is it?
 
 The application is the first steps or an MVP (Minimum Viable Product) for a future potential Pokedex Data Provider, via REST APIs to retrieve the Pokemon's details.
 
@@ -38,20 +35,20 @@ The third party dependencies used by the different projects so far are as follow
 - Microsoft Test Framework (Unit Testing Projects)
 - Moq (Unit Testing Projects)
 
+<br/>
 
 
-
-**How to Run it?**
-
+# How to Run it?
 The below steps assume you have Docker installed on your local machine.
+<br/>
 
 How To run this application on Windows:
 
 - **Clone Repository to local**
-- Navidate to the repository on your local - you need to be at the root of the repository folder, where the  solution file (Pokedex.sln) file can be found.
+- Navigate to the repository on your local - you need to be at the root of the repository folder, where the  solution file (Pokedex.sln) file can be found.
 - Create a Docker image using the command below; note that this step will be using the DockerFile file found in this folder to create the immage:
   - **docker.exe build -t pokedex .**
-  - if this steps fails because of soe networking issues, please refer to the "Possible Known Build Issues" --> "Networking - **Change Local Network Adapter Interface Metric**", this could be caused as this container will use the internet to retrieve data 
+  - if this steps fails because of some networking issues, please refer to the "Possible Known Build Issues" --> "Networking - **Change Local Network Adapter Interface Metric**" below, this could be caused since this container will use the internet to retrieve data and docker build will try to map the container to the first network adapter it finds (the lowest interface metric), which may not be appropriate (i.e. No Internet) 
   - now, your machine should contain a few docker images which compose the "pokedex" docker image that we will use in the next step.
 - Now, time to run an instance of our Docker image - run the following:
   - **docker run -it --rm -p 5000:80 --name pokedex-instance pokedex**
@@ -60,19 +57,20 @@ How To run this application on Windows:
     - http://localhost:5000/api/pokemon/pikachu
     - http://localhost:5000/api/pokemon/translated/pikachu
 
+<br/>
 
-
-
-
-
-**Possible Known Build Issues** 
+# Possible Known Build Issues 
 
 **Networking - Change Local Network Adapter Interface Metric**
 
 In Powershell, on the host: Get the interface detail for the network adapter you want to map your container to, generally called "ethernet" or Wifi"  
 Get-NetIPInterface -AddressFamily IPv4 | Sort-Object -Property InterfaceMetric -Descending
 
+
 if the interface metric of the adapter you want to use is not the lowest in the listed interfaces, Set it to be the one with the lowest interface metric; here we want to use the adapter called "WIFI".
+
 Set-NetIPInterface -InterfaceAlias 'WIFI' -InterfaceMetric 1
 
 
+ 
+ 

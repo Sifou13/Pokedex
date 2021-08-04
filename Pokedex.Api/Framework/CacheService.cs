@@ -43,7 +43,7 @@ namespace Pokedex.Api.Framework
         {
             return new MemoryCacheEntryOptions()
                         .SetAbsoluteExpiration(dateTimeProvider.GetDateTimeUtcNow().AddHours(24))
-                        .SetSlidingExpiration(new TimeSpan(0, 15, 0))
+                        //.SetSlidingExpiration(new TimeSpan(0, 15, 0)) // Removing for test/assessment of caching efficiency on Azure Web App
                         .SetPriority(CacheItemPriority.Normal);
         }
     }

@@ -57,6 +57,14 @@ The below steps assume you have Docker installed on your local machine.
 
 <br/>
 
+# Try it live online
+
+if you did not want to go through the joys of setting up the container yourself and simply try the application, this is being deployed to an Azure containerized Web app which is available at the following example urls (feel free to try it for other pokemons):
+
+https://pokedexsif.azurewebsites.net/api/pokemon/translated/mewtwo
+https://pokedexsif.azurewebsites.net/api/pokemon/mewtwo
+
+<br/>
 # Possible Known Build Issues 
 
 **Networking - Change Local Network Adapter Interface Metric**

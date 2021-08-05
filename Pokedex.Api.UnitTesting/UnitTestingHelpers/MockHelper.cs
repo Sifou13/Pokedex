@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Pokedex.Api.Clients;
 using Pokedex.Api.Framework;
-using Pokedex.Services.Contract.Orchestrators;
 using System.Threading.Tasks;
 
 namespace Pokedex.Api.UnitTesting.UnitTestingHelpers
@@ -10,30 +10,30 @@ namespace Pokedex.Api.UnitTesting.UnitTestingHelpers
     public static class MockHelper
     {
         #region Pokedex Service
-        public static void ExpectGetPokemonDetailsAsync(this Mock<IPokemonInformationOrchestrator> pokemonInformationOrchestrator, string name, Pokedex.Services.Contract.PokemonBasic pokemonToReturn)
+        public static void ExpectGetPokemonDetailsAsync(this Mock<IPokemonInformationServiceClient> pokemonInformationServiceClientMock, string name, Models.PokemonBasic pokemonToReturn)
         {
-            pokemonInformationOrchestrator
+            pokemonInformationServiceClientMock
                 .Setup(x => x.GetPokemonDetailsAsync(name))
                 .Returns(Task.FromResult(pokemonToReturn))
                 .Verifiable();
         }
 
-        public static void VerifyGetPokemonDetailsAsync(this Mock<IPokemonInformationOrchestrator> pokemonInformationOrchestrator, string name, Times? callCount = null)
+        public static void VerifyGetPokemonDetailsAsync(this Mock<IPokemonInformationServiceClient> pokemonInformationServiceClient, string name, Times? callCount = null)
         {
-            pokemonInformationOrchestrator.Verify(x => x.GetPokemonDetailsAsync(name), callCount ?? Times.AtMostOnce());
+            pokemonInformationServiceClient.Verify(x => x.GetPokemonDetailsAsync(name), callCount ?? Times.AtMostOnce());
         }
 
-        public static void ExpectGetTranslatedPokemonDetailsAsync(this Mock<IPokemonInformationOrchestrator> pokemonInformationOrchestrator, string name, Pokedex.Services.Contract.PokemonBasic pokemonToReturn)
+        public static void ExpectGetTranslatedPokemonDetailsAsync(this Mock<IPokemonInformationServiceClient> pokemonInformationServiceClient, string name, Models.PokemonBasic pokemonToReturn)
         {
-            pokemonInformationOrchestrator
+            pokemonInformationServiceClient
                 .Setup(x => x.GetTranslatedPokemonDetailsAsync(name))
                 .Returns(Task.FromResult(pokemonToReturn))
                 .Verifiable();
         }
 
-        public static void VerifyGetTranslatedPokemonDetailsAsync(this Mock<IPokemonInformationOrchestrator> pokemonInformationOrchestrator, string name, Times? callCount = null)
+        public static void VerifyGetTranslatedPokemonDetailsAsync(this Mock<IPokemonInformationServiceClient> pokemonInformationServiceClient, string name, Times? callCount = null)
         {
-            pokemonInformationOrchestrator.Verify(x => x.GetTranslatedPokemonDetailsAsync(name), callCount ?? Times.AtMostOnce());
+            pokemonInformationServiceClient.Verify(x => x.GetTranslatedPokemonDetailsAsync(name), callCount ?? Times.AtMostOnce());
         }
         #endregion
 

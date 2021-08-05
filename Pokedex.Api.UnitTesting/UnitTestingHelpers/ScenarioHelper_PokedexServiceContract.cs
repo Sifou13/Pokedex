@@ -1,4 +1,4 @@
-﻿using Pokedex.Services.Contract;
+﻿using Pokedex.Clients;
 
 namespace Pokedex.Api.UnitTesting.UnitTestingHelpers
 {
@@ -6,7 +6,7 @@ namespace Pokedex.Api.UnitTesting.UnitTestingHelpers
     {
         public static PokemonBasic CreatePokemonBasic(string name, string description, PokemonHabitat Habitat = PokemonHabitat.Cave, bool IsLegendary = false)
         {
-            return new Pokedex.Services.Contract.PokemonBasic
+            return new PokemonBasic
             {
                 Name = name,
                 Description = description,

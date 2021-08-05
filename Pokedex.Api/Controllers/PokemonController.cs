@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Pokedex.Api.Clients;
 using Pokedex.Api.Framework;
 using System;
 using System.Threading.Tasks;
@@ -11,16 +12,13 @@ namespace Pokedex.Api.Controllers
     [Route("api/[controller]")]
     public class PokemonController : ControllerBase
     {
-        private readonly Services.Contract.Orchestrators.IPokemonInformationOrchestrator pokemonInformationOrchestrator;
-        private readonly IMapper mapper;
+        private readonly IPokemonInformationServiceClient pokemonInformationServiceClient;
         private readonly ICacheService cacheService;
 
-        public PokemonController(Services.Contract.Orchestrators.IPokemonInformationOrchestrator pokemonInformationOrchestrator,             
-                                 IMapper mapper, 
+        public PokemonController(IPokemonInformationServiceClient pokemonInformationServiceClient,             
                                  ICacheService cacheService)
         {
-            this.pokemonInformationOrchestrator = pokemonInformationOrchestrator;
-            this.mapper = mapper;
+            this.pokemonInformationServiceClient = pokemonInformationServiceClient;
             this.cacheService = cacheService;
         }
 
@@ -43,17 +41,17 @@ namespace Pokedex.Api.Controllers
 
             if (pokemonBasicCacheValue == null)
             {
-                Services.Contract.PokemonBasic retrievePokemonFromService = await pokemonInformationOrchestrator.GetPokemonDetailsAsync(pokemonName);
+                Models.PokemonBasic retrievePokemonFromService = await pokemonInformationServiceClient.GetPokemonDetailsAsync(pokemonName);
 
                 if (retrievePokemonFromService == null)
                     return NotFound($"We could not find a pokemon named {pokemonName}; it could be an issue on our end, so if you're convinced something went wrong, please get in touch");
                 
-                cacheService.Set(cacheKey, mapper.Map<Models.PokemonBasic>(retrievePokemonFromService));
+                cacheService.Set(cacheKey, retrievePokemonFromService);
 
-                return Ok(mapper.Map<Models.PokemonBasic>(retrievePokemonFromService));
+                return Ok(retrievePokemonFromService);
             }
 
-            return Ok(mapper.Map<Models.PokemonBasic>(pokemonBasicCacheValue));
+            return Ok(pokemonBasicCacheValue);
         }
     }
 }

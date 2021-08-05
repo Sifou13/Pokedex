@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option csharp_namespace = "Pokedex.Services.Orchestrators";
+
+package PokedexService;
+
+service IPokemonInformationService {
+  rpc GetPokemonDetails (PokemonRequest) returns (PokemonBasic);
+  rpc GetTranslatedPokemonDetails (PokemonRequest) returns (PokemonBasic);
+}
+
+message PokemonRequest {
+  string pokemonName = 1;
+}
+
+message PokemonBasic {
+  string name = 1;
+  string description = 2;
+  PokemonHabitat habitat = 3;
+  bool isLegendary = 4;
+}
+
+enum PokemonHabitat {
+  NONE = 0;
+  CAVE = 1;
+  FOREST = 2;
+  GRASSLAND = 3;
+  MOUNTAIN = 4;
+  RARE = 5;
+  ROUGH_TERRAIN = 6;
+  SEA = 7;
+  URBAN = 8;
+  WATERS_EDGE = 9;
+}

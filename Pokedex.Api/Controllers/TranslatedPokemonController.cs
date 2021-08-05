@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Pokedex.Api.Clients;
 using Pokedex.Api.Framework;
 using System.Threading.Tasks;
 
@@ -9,16 +10,13 @@ namespace Pokedex.Api.Controllers
     [Route("api/pokemon/translated/")]
     public class TranslatedPokemonController : ControllerBase
     {
-        private readonly Services.Contract.Orchestrators.IPokemonInformationOrchestrator pokemonInformationOrchestrator;
-        private readonly IMapper mapper;
+        private readonly IPokemonInformationServiceClient pokemonInformationServiceClient;
         private readonly ICacheService cacheService;
 
-        public TranslatedPokemonController(Services.Contract.Orchestrators.IPokemonInformationOrchestrator pokemonInformationOrchestrator, 
-                                           IMapper mapper,
+        public TranslatedPokemonController(IPokemonInformationServiceClient pokemonInformationServiceClient, 
                                            ICacheService cacheService)
         {
-            this.pokemonInformationOrchestrator = pokemonInformationOrchestrator;
-            this.mapper = mapper;
+            this.pokemonInformationServiceClient = pokemonInformationServiceClient;
             this.cacheService = cacheService;
         }
 
@@ -39,16 +37,14 @@ namespace Pokedex.Api.Controllers
 
             if (translatedPokemonBasicCacheValue == null)
             {
-                Services.Contract.PokemonBasic translatedPokemonFromService = await pokemonInformationOrchestrator.GetTranslatedPokemonDetailsAsync(pokemonName);
+                Models.PokemonBasic translatedPokemonFromService = await pokemonInformationServiceClient.GetTranslatedPokemonDetailsAsync(pokemonName);
 
                 if (translatedPokemonFromService == null)
                     return NotFound($"We could not find a pokemon named {pokemonName}; it could be an issue on our end, so if you're convinced something went wrong, please get in touch");
+                                
+                cacheService.Set(translationCacheKey, translatedPokemonFromService);
 
-                Models.PokemonBasic returnValue = mapper.Map<Models.PokemonBasic>(translatedPokemonFromService);
-
-                cacheService.Set(translationCacheKey, returnValue);
-
-                return Ok(returnValue);
+                return Ok(translatedPokemonFromService);
             }
             
             return Ok(translatedPokemonBasicCacheValue);

@@ -11,11 +11,11 @@ namespace Pokedex.Api
     {   
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(Pokedex.Services.DataContractMappingProfile), typeof(Framework.ServicesMappingProfile));
+            services.AddAutoMapper(typeof(Framework.ServicesMappingProfile));
 
             //We've extracted this to an extension method on the Framework namespace to keep the plumbing out of Startup
             // and keep this class readable
-            services.RegisterPokedexServices();
+            services.RegisterPokedexApiServices();
 
             services
                 .AddControllers()

@@ -2,10 +2,10 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Pokedex.Api.Clients;
 using Pokedex.Api.Controllers;
 using Pokedex.Api.Framework;
 using Pokedex.Api.UnitTesting.UnitTestingHelpers;
-using Pokedex.Services.Contract.Orchestrators;
 using System.Threading.Tasks;
 
 namespace Pokedex.Api.UnitTesting.Controllers
@@ -17,22 +17,22 @@ namespace Pokedex.Api.UnitTesting.Controllers
     public class PokemonController_Test
     {
         private PokemonController pokemonController;
-        private Mock<IPokemonInformationOrchestrator> pokemonInformationOrchestratorMock;
+        private Mock<IPokemonInformationServiceClient> pokemonInformationServiceClientMock;
         private Mock<ICacheService> cacheServiceMock;
 
         [TestInitialize]
         public void Initialize()
         {
             cacheServiceMock = new Mock<ICacheService>(MockBehavior.Strict);
-            pokemonInformationOrchestratorMock = new Mock<IPokemonInformationOrchestrator>(MockBehavior.Strict);
+            pokemonInformationServiceClientMock = new Mock<IPokemonInformationServiceClient>(MockBehavior.Strict);
 
-            pokemonController = UnitTestSetupHelper.CreatePokemonController(pokemonInformationOrchestratorMock, cacheServiceMock);
+            pokemonController = UnitTestSetupHelper.CreatePokemonController(pokemonInformationServiceClientMock, cacheServiceMock);
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            pokemonInformationOrchestratorMock.VerifyAll();
+            pokemonInformationServiceClientMock.VerifyAll();
         }
 
         [TestMethod]
@@ -52,11 +52,11 @@ namespace Pokedex.Api.UnitTesting.Controllers
         {
             string pokemonName = "Pikachu";
 
-            Pokedex.Services.Contract.PokemonBasic fakeServiceReturnedPokemon = ScenarioHelper_PokedexServiceContract.CreatePokemonBasic(pokemonName, "Pikachu's Description");
+            Models.PokemonBasic fakeServiceReturnedPokemon = ScenarioHelper_ApiModels.CreatePokemon(pokemonName, "Pikachu's Description");
 
             cacheServiceMock.ExpectTryGetValue(GetPokemonNameCacheKey(pokemonName), null);
 
-            pokemonInformationOrchestratorMock.ExpectGetPokemonDetailsAsync(pokemonName, fakeServiceReturnedPokemon);
+            pokemonInformationServiceClientMock.ExpectGetPokemonDetailsAsync(pokemonName, fakeServiceReturnedPokemon);
 
             Models.PokemonBasic pokemonCacheValue = ScenarioHelper_ApiModels.CreatePokemon(pokemonName, "Pikachu's Description");
 
@@ -70,7 +70,7 @@ namespace Pokedex.Api.UnitTesting.Controllers
 
             AssertPokemonProperties(expectedPokemon, (Models.PokemonBasic)(returnedPokemon.Result as OkObjectResult).Value);
 
-            pokemonInformationOrchestratorMock.VerifyGetPokemonDetailsAsync(pokemonName);
+            pokemonInformationServiceClientMock.VerifyGetPokemonDetailsAsync(pokemonName);
 
             cacheServiceMock.VerifyTryGetValue(GetPokemonNameCacheKey(pokemonName));
             cacheServiceMock.VerifySet(GetPokemonNameCacheKey(pokemonName), pokemonCacheValue);
@@ -93,7 +93,7 @@ namespace Pokedex.Api.UnitTesting.Controllers
 
             AssertPokemonProperties(expectedPokemon, (Models.PokemonBasic)(returnedPokemon.Result as OkObjectResult).Value);
 
-            pokemonInformationOrchestratorMock.VerifyGetPokemonDetailsAsync(pokemonName);
+            pokemonInformationServiceClientMock.VerifyGetPokemonDetailsAsync(pokemonName);
 
             cacheServiceMock.VerifyTryGetValue(GetPokemonNameCacheKey(pokemonName));
         }
@@ -105,7 +105,7 @@ namespace Pokedex.Api.UnitTesting.Controllers
 
             cacheServiceMock.ExpectTryGetValue(GetPokemonNameCacheKey(pokemonName), null);
 
-            pokemonInformationOrchestratorMock.ExpectGetPokemonDetailsAsync(pokemonName, null);
+            pokemonInformationServiceClientMock.ExpectGetPokemonDetailsAsync(pokemonName, null);
 
             ActionResult<Models.PokemonBasic> returnedPokemon = await pokemonController.Get(pokemonName);
 
@@ -113,7 +113,7 @@ namespace Pokedex.Api.UnitTesting.Controllers
 
             Assert.AreEqual($"We could not find a pokemon named {pokemonName}; it could be an issue on our end, so if you're convinced something went wrong, please get in touch", ((NotFoundObjectResult)returnedPokemon.Result).Value);
 
-            pokemonInformationOrchestratorMock.VerifyGetPokemonDetailsAsync(pokemonName);
+            pokemonInformationServiceClientMock.VerifyGetPokemonDetailsAsync(pokemonName);
         }
 
         private void AssertPokemonProperties(Models.PokemonBasic expectedPokemonBasic, Models.PokemonBasic actualPokemonBasic)

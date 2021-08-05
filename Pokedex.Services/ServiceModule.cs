@@ -41,7 +41,7 @@ namespace Pokedex.Services
         private static void RegisterPokedexOrchestrators(this IServiceCollection services)
         {
             services.AddScoped<IPokemonInformationOrchestrator, PokemonInformationOrchestrator>();
-        }
+        }        
         #endregion
     }
 }

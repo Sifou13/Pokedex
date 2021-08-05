@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Pokedex.Api.Clients;
 using Pokedex.Api.Controllers;
 using Pokedex.Api.Framework;
 using Pokedex.Api.UnitTesting.UnitTestingHelpers;
@@ -12,16 +13,16 @@ namespace Pokedex.Api.UnitTesting.Controllers
     public class TranslatedPokemonController_Test
     {
         private TranslatedPokemonController translatedPokemonController;
-        private Mock<Services.Contract.Orchestrators.IPokemonInformationOrchestrator> pokemonInformationOrchestratorMock;
+        private Mock<IPokemonInformationServiceClient> pokemonInformationServiceClientMock;
         private Mock<ICacheService> cacheServiceMock;
 
         [TestInitialize]
         public void Initialize()
         {
-            pokemonInformationOrchestratorMock = new Mock<Services.Contract.Orchestrators.IPokemonInformationOrchestrator>(MockBehavior.Strict);
+            pokemonInformationServiceClientMock = new Mock<IPokemonInformationServiceClient>(MockBehavior.Strict);
             cacheServiceMock = new Mock<ICacheService>(MockBehavior.Strict);
 
-            translatedPokemonController = UnitTestSetupHelper.CreateTranslatedPokemonController(pokemonInformationOrchestratorMock, cacheServiceMock);
+            translatedPokemonController = UnitTestSetupHelper.CreateTranslatedPokemonController(pokemonInformationServiceClientMock, cacheServiceMock);
         }
 
         [TestMethod]
@@ -43,9 +44,9 @@ namespace Pokedex.Api.UnitTesting.Controllers
 
             cacheServiceMock.ExpectTryGetValue(GetPokemonNameCacheKey(pokemonName), null);
 
-            Pokedex.Services.Contract.PokemonBasic fakeServiceReturnedPokemon = ScenarioHelper_PokedexServiceContract.CreatePokemonBasic(pokemonName, "Pikachu's translated description");
+            Models.PokemonBasic fakeServiceReturnedPokemon = ScenarioHelper_ApiModels.CreatePokemon(pokemonName, "Pikachu's translated description");
 
-            pokemonInformationOrchestratorMock.ExpectGetTranslatedPokemonDetailsAsync(pokemonName, fakeServiceReturnedPokemon);
+            pokemonInformationServiceClientMock.ExpectGetTranslatedPokemonDetailsAsync(pokemonName, fakeServiceReturnedPokemon);
 
             Models.PokemonBasic pokemonCacheValue = ScenarioHelper_ApiModels.CreatePokemon(pokemonName, "Pikachu's translated description");
 
@@ -59,7 +60,7 @@ namespace Pokedex.Api.UnitTesting.Controllers
 
             AssertPokemonProperties(expectedPokemon, (Models.PokemonBasic)(returnedPokemon.Result as OkObjectResult).Value);
 
-            pokemonInformationOrchestratorMock.VerifyGetPokemonDetailsAsync(pokemonName);
+            pokemonInformationServiceClientMock.VerifyGetPokemonDetailsAsync(pokemonName);
 
             cacheServiceMock.VerifyTryGetValue(GetPokemonNameCacheKey(pokemonName));
             cacheServiceMock.VerifySet(GetPokemonNameCacheKey(pokemonName), pokemonCacheValue);
@@ -82,7 +83,7 @@ namespace Pokedex.Api.UnitTesting.Controllers
 
             AssertPokemonProperties(expectedPokemon, (Models.PokemonBasic)(returnedPokemon.Result as OkObjectResult).Value);
 
-            pokemonInformationOrchestratorMock.VerifyGetPokemonDetailsAsync(pokemonName);
+            pokemonInformationServiceClientMock.VerifyGetPokemonDetailsAsync(pokemonName);
 
             cacheServiceMock.VerifyTryGetValue(GetPokemonNameCacheKey(pokemonName));
         }
@@ -94,7 +95,7 @@ namespace Pokedex.Api.UnitTesting.Controllers
 
             cacheServiceMock.ExpectTryGetValue(GetPokemonNameCacheKey(pokemonName), null);
 
-            pokemonInformationOrchestratorMock.ExpectGetTranslatedPokemonDetailsAsync(pokemonName, null);
+            pokemonInformationServiceClientMock.ExpectGetTranslatedPokemonDetailsAsync(pokemonName, null);
 
             ActionResult<Models.PokemonBasic> returnedPokemon = await translatedPokemonController.Get(pokemonName);
 
@@ -102,7 +103,7 @@ namespace Pokedex.Api.UnitTesting.Controllers
 
             Assert.AreEqual($"We could not find a pokemon named {pokemonName}; it could be an issue on our end, so if you're convinced something went wrong, please get in touch", ((NotFoundObjectResult)returnedPokemon.Result).Value);
 
-            pokemonInformationOrchestratorMock.VerifyGetPokemonDetailsAsync(pokemonName);
+            pokemonInformationServiceClientMock.VerifyGetPokemonDetailsAsync(pokemonName);
         }
 
         private void AssertPokemonProperties(Models.PokemonBasic expectedPokemonBasic, Models.PokemonBasic actualPokemonBasic)
